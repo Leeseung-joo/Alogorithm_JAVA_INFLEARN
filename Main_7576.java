@@ -12,7 +12,7 @@ public class Main_7576 {
       StringTokenizer st = new StringTokenizer(br.readLine());
 
       M = Integer.parseInt(st.nextToken()); // 가로
-      N = Integer.parseInt(st.nextToken()); // 세로
+      N = Integer.parseInt(st.nextToken()); 
 
       box = new int[N][M];
       ArrayDeque<int[]> q = new ArrayDeque<>();

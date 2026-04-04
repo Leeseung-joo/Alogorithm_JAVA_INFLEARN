@@ -1,100 +1,99 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
+import java.io.*;
+public class Main_1753{
+	static int V;
+	static int E;
+	static int start;
+	static int INF = Integer.MAX_VALUE;
+	static ArrayList<Node>[] graph;
 
-public class Main {
 
-	static final int INF = 1_000_000;
-	
-    static int V, E, K;
-    static int[] dist;
-    static ArrayList[] adjList;
-    
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+	static class Node implements Comparable<Node>{
+		int to;
+		int cost;
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        V = Integer.parseInt(st.nextToken());
-        E = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(br.readLine());
-        
-        initDistArr();
-        initAdjList();
-        
-        for (int i = 1; i <= E; i++) {
-        	st = new StringTokenizer(br.readLine());
-        	int u = Integer.parseInt(st.nextToken());
-        	int v = Integer.parseInt(st.nextToken());
-        	int w = Integer.parseInt(st.nextToken());
-        	
-        	adjList[u].add(new Edge(v, w));
-        }
-  
-        dijkstra();
-        
-        for (int i = 1; i <= V; i++) {
-        	if (dist[i] == INF)
-        		sb.append("INF").append('\n');
-        	else 
-        		sb.append(dist[i]).append('\n');
-        }
-        System.out.println(sb);
-    }
-    
-    private static void initDistArr() {
-    	dist = new int[V + 1];
-    	for (int i = 1; i <= V; i++) {
-    		dist[i] = INF;
-    	}
-    }
-    
-    private static void initAdjList() {
-    	adjList = new ArrayList[V + 1];
-    	for (int i = 0; i <= V; i++) {
-    		adjList[i] = new ArrayList<>();
-    	}
-    }
-    
-    private static void dijkstra() {
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
-        
-        // 시작점 설정
-        dist[K] = 0;
-        pq.offer(new Edge(K, 0));
-        
-        while (!pq.isEmpty()) {
-        	Edge now = pq.poll();
-        	
-        	// 더 큰 가중치로 도착한 경우
-        	if (dist[now.target] < now.cost) {
-        		continue;
-        	}
-        	
-        	int size = adjList[now.target].size();
-        	for (int i = 0; i < size; i++) {
-        		Edge next = (Edge) adjList[now.target].get(i);
-        		
-        		if (dist[next.target] > dist[now.target] + next.cost) {
-        			dist[next.target] = dist[now.target] + next.cost;
-        			pq.offer(new Edge(next.target, dist[next.target]));
-        		}
-        	}
-        }
-    }
-    
-    static class Edge implements Comparable<Edge> {
-    	int target, cost;
-    	
-    	public Edge(int target, int cost) {
-    		this.target = target;
-    		this.cost = cost;
-    	}
+		Node(int to, int cost){
+			this.to = to;
+			this.cost = cost;
+		}
 
 		@Override
-		public int compareTo(Edge edge) {
-			return this.cost - edge.cost;
+		public int compareTo(Node o){
+			return this.cost - o.cost;
 		}
-    }
-  }
+	}
+	public static void main(String[] args) throws IOException {
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+
+		V = Integer.parseInt(st.nextToken());
+		E = Integer.parseInt(st.nextToken());
+
+		start = Integer.parseInt(br.readLine());
+
+		graph = new ArrayList[V+1];
+
+		for(int i = 0; i <= V; i++){
+			graph[i] = new ArrayList<>();
+		}
+
+		for(int i = 0; i < E; i++){
+			st = new StringTokenizer(br.readLine());
+
+			int from = Integer.parseInt(st.nextToken());
+			int to = Integer.parseInt(st.nextToken());
+			int cost = Integer.parseInt(st.nextToken());
+
+			graph[from].add(new Node(to,cost));
+}
+
+		int[] result = dijkstra(start);
+
+		for(int i = 1; i <= V; i++){
+			if(result[i] == INF){
+				System.out.println("INF");
+			}else{
+				System.out.println(result[i]);
+			}
+		}
+
+	}
+
+	static int[] dijkstra(int start){
+
+		boolean[] visited = new boolean[V+1];
+		int[] dist = new int[V+1];
+		Arrays.fill(dist, INF);
+
+		dist[start] = 0;
+		PriorityQueue<Node> pq = new PriorityQueue<>();
+
+		pq.offer(new Node(start,0));
+
+		while(!pq.isEmpty()){
+
+			int nowVertex = pq.poll().to;
+
+			if(visited[nowVertex]) continue;
+			visited[nowVertex] = true;
+
+			for(Node next: graph[nowVertex]){
+				if(dist[next.to] > dist[nowVertex] + next.cost){
+					dist[next.to] = dist[nowVertex] + next.cost;
+
+					pq.offer(new Node(next.to, dist[next.to]));
+				}
+			}
+
+
+
+		}
+
+		return dist;
+
+
+
+
+	}
+}
